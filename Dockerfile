@@ -20,9 +20,19 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-FROM jenkins/slave:3.29-2
-MAINTAINER Oleg Nenashev <o.v.nenashev@gmail.com>
+FROM alpine:latest
+# FROM jenkins/slave:3.29-2
+MAINTAINER Mika Tuominen <mika.tuominen@polarsquad.com>
 LABEL Description="This is a base image, which allows connecting Jenkins agents via JNLP protocols" Vendor="Jenkins project" Version="3.29"
+
+# Versions: https://pypi.python.org/pypi/awscli#downloads
+ENV AWS_CLI_VERSION 1.16.140
+
+# RUN apt-get --no-cache update && \
+RUN apk add --no-cache docker
+    # apk --no-cache add ca-certificates groff less && \
+    # pip3 --no-cache-dir install awscli==${AWS_CLI_VERSION} && \
+    # rm -rf /var/cache/apk/*
 
 COPY jenkins-slave /usr/local/bin/jenkins-slave
 

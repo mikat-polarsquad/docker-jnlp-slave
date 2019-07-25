@@ -48,4 +48,4 @@ ENTRYPOINT ["jenkins-slave"]
 #     --no-create-home \
 #     "$USER"
 # WORKDIR "/home/$USER"
-USER jenkins
+# USER jenkins

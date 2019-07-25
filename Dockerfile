@@ -1,5 +1,5 @@
-FROM jenkins/slave:3.29-2
-# FROM jenkins/jnlp-slave
+# FROM jenkins/slave:3.29-2
+FROM jenkins/jnlp-slave
 MAINTAINER Mika Tuominen <mika.tuominen@polarsquad.com>
 
 ENV DOCKER_VERSION=18.09.6-ce DOCKER_COMPOSE_VERSION=1.24.0 KUBECTL_VERSION=v1.13.3
@@ -9,12 +9,13 @@ USER root
 
 
 RUN apt-get update && \
+    apt-get install -y curl ca-certificates gnupg2 software-properties-common && \
     apt-get -y install apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg2 \
-    software-properties-common && \
-    curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg > /tmp/dkey; apt-key add /tmp/dkey && \
+    # ca-certificates \
+    # curl \
+    # gnupg2 \
+    # # software-properties-common && \
+RUN curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg > /tmp/dkey; apt-key add /tmp/dkey && \
     add-apt-repository \
     "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
     $(lsb_release -cs) \

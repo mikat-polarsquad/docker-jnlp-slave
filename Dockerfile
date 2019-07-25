@@ -9,19 +9,23 @@ USER root
 
 
 RUN apt-get update && \
-    apt-get install -y curl ca-certificates gnupg2 software-properties-common && \
     apt-get -y install apt-transport-https \
-    # ca-certificates \
-    # curl \
-    # gnupg2 \
-    # # software-properties-common && \
-RUN curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg > /tmp/dkey; apt-key add /tmp/dkey && \
+    ca-certificates \
+    curl \
+    gnupg2 \
+    software-properties-common && \
+    curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg > /tmp/dkey; apt-key add /tmp/dkey && \
     add-apt-repository \
-    "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
+    # "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
+    "deb [arch=amd64] https://download.docker.com/linux/debian \
     $(lsb_release -cs) \
     stable" && \
     apt-get update && \
+    apt-cache policy docker-ce docker-ce-cli containerd.io && \
     apt-get -y install docker-ce
+
+RUN systemctl enable docker
+RUN usermod -aG docker $USER
 
 
 RUN curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-Linux-x86_64 -o /usr/local/bin/docker-compose \
@@ -30,7 +34,8 @@ RUN curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE
 RUN curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubectl
 
-    RUN mkdir /usr/local/bin/jenkins-slave
+
+# RUN mkdir /usr/local/bin/jenkins-slave
 COPY jenkins-slave /usr/local/bin/jenkins-slave
 
 ENTRYPOINT ["jenkins-slave"]

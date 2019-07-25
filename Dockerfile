@@ -22,9 +22,15 @@ RUN apt-get update && \
     stable" && \
     apt-get update && \
     apt-cache policy docker-ce docker-ce-cli containerd.io && \
+    apt-get -y install libltdl7 && \
     apt-get -y install docker-ce
 
+# RUN sudo service docker status
+RUN service docker start
+# RUN docker version
+
 RUN systemctl enable docker
+# RUN chkconfig docker on
 RUN usermod -aG docker $USER
 
 

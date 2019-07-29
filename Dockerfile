@@ -1,65 +1,29 @@
-FROM amazonlinux
-# FROM jenkins/slave:3.29-2
-# FROM jenkins/jnlp-slave
+# The MIT License
+#
+#  Copyright (c) 2015-2017, CloudBees, Inc.
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in
+#  all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#  THE SOFTWARE.
+
+FROM jenkins/slave:3.29-2
 MAINTAINER Mika Tuominen <mika.tuominen@polarsquad.com>
+LABEL Description="This is a base image, which allows connecting Jenkins agents via JNLP protocols" Vendor="Jenkins project" Version="3.29"
 
-ENV DOCKER_VERSION=18.09.6-ce DOCKER_COMPOSE_VERSION=1.24.0 KUBECTL_VERSION=v1.13.3
-ENV USER=jenkins
-
-USER root
-
-RUN yum update -y
-RUN amazon-linux-extras install docker
-
-# RUN apt-get update && \
-#     apt-get -y install apt-transport-https \
-#     ca-certificates \
-#     curl \
-#     gnupg2 \
-#     software-properties-common && \
-#     curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg > /tmp/dkey; apt-key add /tmp/dkey && \
-#     add-apt-repository \
-#     # "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
-#     "deb [arch=amd64] https://download.docker.com/linux/debian \
-#     $(lsb_release -cs) \
-#     stable" && \
-#     apt-get update && \
-#     apt-cache policy docker-ce docker-ce-cli containerd.io && \
-#     apt-get -y install libltdl7 && \
-#     apt-get -y install docker
-
-# RUN sudo service docker status
-# RUN service docker start
-# RUN docker version
-
-# RUN systemctl enable docker
-RUN chkconfig docker on
-
-# RUN groupadd ${USER}
-RUN adduser --home-dir /home/${USER} --groups docker ${USER}
-# RUN adduser --home-dir /home/${USER} --gid ${USER} --groups docker ${USER}
-    # --disabled-password \
-    # --gecos "" \
-    # --no-create-home \
-
-# RUN usermod -aG docker $USER
-
-# RUN curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-'uname -s'-'uname -m' | sudo tee /usr/local/bin/docker-compose > /dev/null && \
-RUN curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-'uname -s'-'uname -m' -o /usr/local/bin/docker-compose && \
-    chmod +x /usr/local/bin/docker-compose && \
-    ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-
-# RUN docker-compose --version
-# RUN curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-Linux-x86_64 -o /usr/local/bin/docker-compose \
-#     && chmod +x /usr/local/bin/docker-compose
-
-RUN curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl \
-    && chmod +x /usr/local/bin/kubectl
-
-
-# RUN mkdir /usr/local/bin/jenkins-slave
 COPY jenkins-slave /usr/local/bin/jenkins-slave
 
 ENTRYPOINT ["jenkins-slave"]
-WORKDIR "/home/$USER"
-USER jenkins

@@ -23,6 +23,7 @@ RUN apt-get update && \
     apt-get update && \
     apt-cache policy docker-ce docker-ce-cli containerd.io && \
     # apt-get -y install libltdl7 && \
+    addgroup --gid 995 docker && \
     apt-get -y install docker-ce && \
     apt-get clean
 
@@ -56,5 +57,9 @@ RUN groupadd "$USER" \
     # --no-create-home \
     "$USER"
 RUN usermod -aG docker $USER
+
+### Check docker installation
+RUN cat /etc/group | grep docker
+
 WORKDIR "/home/$USER"
 USER jenkins
